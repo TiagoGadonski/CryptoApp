@@ -1,0 +1,13 @@
+﻿<Window x:Class="CryptoApp.Views.TipsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Tips" Height="300" Width="400">
+    <StackPanel Margin="10">
+        <TextBlock Text="Here are some tips for using the application:" FontWeight="Bold" Margin="5"/>
+        <ListBox>
+            <ListBoxItem Content="Tip 1: You can refresh the data anytime by clicking the 'Refresh' button."/>
+            <ListBoxItem Content="Tip 2: Use the search box to quickly find specific cryptocurrencies."/>
+        </ListBox>
+        <Button Content="Close" HorizontalAlignment="Right" Click="CloseButton_Click"/>
+    </StackPanel>
+</Window>
