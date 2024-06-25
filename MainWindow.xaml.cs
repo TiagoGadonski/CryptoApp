@@ -18,5 +18,23 @@ namespace CryptoApp
                 (DataContext as MainViewModel)?.FilterCommand.Execute(textBox.Text);
             }
         }
+
+        private void ToggleMode_Checked(object sender, RoutedEventArgs e)
+        {
+            var viewModel = DataContext as MainViewModel;
+            if (viewModel != null)
+            {
+                viewModel.IsStockMode = true;
+            }
+        }
+
+        private void ToggleMode_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var viewModel = DataContext as MainViewModel;
+            if (viewModel != null)
+            {
+                viewModel.IsStockMode = false;
+            }
+        }
     }
 }

@@ -36,6 +36,8 @@
                 <materialDesign:PackIcon Kind="Bell" />
             </Button>
             <ComboBox Width="150" Margin="10,0" ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding SelectedPeriod}" ToolTip="Select Period"/>
+            <ToggleButton x:Name="toggleMode" Content="Mostrar Ações" IsChecked="False" Checked="ToggleMode_Checked" Unchecked="ToggleMode_Unchecked"/>
+
         </StackPanel>
 
         <!-- DataGrid para Todas as Criptomoedas -->
@@ -70,6 +72,8 @@
         <!-- Barra de Status -->
         <StatusBar Grid.ColumnSpan="2" Grid.Row="2" Background="LightGray" HorizontalAlignment="Stretch" Padding="5">
             <TextBlock Text="{Binding StatusMessage}" Foreground="Black"/>
+            <Button Content="Abrir Notícias" Command="{Binding OpenNewsCommand}" HorizontalAlignment="Center" Margin="3"/>
+
         </StatusBar>
     </Grid>
 </Window>

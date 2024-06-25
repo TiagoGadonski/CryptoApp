@@ -99,11 +99,14 @@ namespace CryptoApp.ViewModels
             get => _cryptos;
             set { _cryptos = value; OnPropertyChanged(nameof(Cryptos)); }
         }
+        public ObservableCollection<Stock> Stocks { get; set; }
+        private bool _isStockMode;
 
         public ICommand SetAlertCommand { get; private set; }
         public ICommand OpenDetailViewCommand { get; private set; }
         public ICommand RefreshDataCommand { get; private set; }
         public ICommand FilterCommand { get; private set; }
+        public ICommand OpenNewsCommand { get; private set; }
 
         public MainViewModel()
         {
@@ -111,12 +114,14 @@ namespace CryptoApp.ViewModels
             OpenDetailViewCommand = new RelayCommand(OpenDetailView);
             RefreshDataCommand = new RelayCommand(_ => LoadData());
             MarketDataService = new MarketDataService();
+            OpenNewsCommand = new RelayCommand(OpenNews);
             Cryptos = new ObservableCollection<CryptoCurrency>();
+            Stocks = new ObservableCollection<Stock>();
             LoadData();
             FilterCommand = new RelayCommand(FilterCryptos);
 
             _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMinutes(5); // Set the refresh interval
+            _timer.Interval = TimeSpan.FromMinutes(5);
             _timer.Tick += (sender, args) => LoadData();
             _timer.Start();
             _notifier = new Notifier(cfg =>
@@ -134,11 +139,38 @@ namespace CryptoApp.ViewModels
                 cfg.Dispatcher = Application.Current.Dispatcher;
             });
 
-            // Initialize period options
             PeriodOptions = new ObservableCollection<string>
             {
                 "1d", "1w", "1m", "1y"
             };
+        }
+        public bool IsStockMode
+        {
+            get => _isStockMode;
+            set
+            {
+                _isStockMode = value;
+                OnPropertyChanged(nameof(IsStockMode));
+                if (_isStockMode)
+                    LoadStocks();
+                else
+                    LoadCryptos();
+            }
+        }
+
+        private void LoadStocks()
+        {
+        }
+
+        private void LoadCryptos()
+        {
+        }
+
+        private void OpenNews(object parameter)
+        {
+            NewsView newsView = new NewsView();
+            newsView.DataContext = new NewsViewModel();
+            newsView.Show();
         }
 
         private void FilterCryptos(object parameter)
@@ -146,13 +178,25 @@ namespace CryptoApp.ViewModels
             string filter = parameter as string;
             if (string.IsNullOrEmpty(filter))
             {
-                // Load all or reset view
                 LoadData();
             }
             else
             {
                 var filtered = MarketDataService.FilterCryptos(filter);
                 Cryptos = new ObservableCollection<CryptoCurrency>(filtered);
+            }
+        }
+
+        private void FilterStocks(object parameter)
+        {
+            string filter = parameter as string;
+            if (string.IsNullOrEmpty(filter))
+            {
+                LoadData();
+            }
+            else
+            {
+                LoadData();
             }
         }
 
@@ -199,7 +243,7 @@ namespace CryptoApp.ViewModels
         private void OpenDetailView(object parameter)
         {
             CryptoDetailView detailView = new CryptoDetailView();
-            detailView.Show(); // Mostra a nova janela
+            detailView.Show();
         }
 
         private void SetTargetPrice(object parameter)
@@ -222,13 +266,13 @@ namespace CryptoApp.ViewModels
                     Cryptos.Add(crypto);
                     Debug.WriteLine($"Loaded: {crypto.Symbol} - Change 24h: {crypto.Quote["USD"].PercentChange24h}");
                 }
-                InitializeChartData();  // Atualiza os dados do gráfico aqui
+                InitializeChartData();
                 StatusMessage = "Data loaded successfully";
             }
             catch (Exception ex)
             {
                 StatusMessage = $"Failed to load data: {ex.Message}";
-                Debug.WriteLine(ex.ToString()); // Provides more detail in the output window
+                Debug.WriteLine(ex.ToString());
             }
         }
 
@@ -254,15 +298,23 @@ namespace CryptoApp.ViewModels
             }
         }
 
-        private void FilterCryptos(string filter)
+        private void FilterData(object parameter)
         {
+            string? filter = parameter as string;
             if (string.IsNullOrEmpty(filter))
             {
                 LoadData();
             }
             else
             {
-                Cryptos = new ObservableCollection<CryptoCurrency>(MarketDataService.FilterCryptos(filter));
+                if (IsStockMode)
+                {
+                }
+                else
+                {
+                    var filteredCryptos = MarketDataService.FilterCryptos(filter);
+                    Cryptos = new ObservableCollection<CryptoCurrency>(filteredCryptos);
+                }
             }
         }
 
